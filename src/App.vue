@@ -337,7 +337,7 @@ const exportLocationData = () => {
             v-model="checkInterval" 
             class="border border-gray-300 rounded px-2 py-1 text-sm"
           >
-            <option :value="15000">15 วินาที</option>
+            <option :value="1000">1 วินาที</option>
             <option :value="30000">30 วินาที</option>
             <option :value="60000">1 นาที</option>
             <option :value="300000">5 นาที</option>
