@@ -16,7 +16,7 @@ const isWorkingOffsite = ref(false)
 const lastCheckTime = ref<Date | null>(null)
 const locationAccuracy = ref<number | null>(null)
 const trackingEnabled = ref(true)
-const checkInterval = ref(30000) // Default 30 seconds
+const checkInterval = ref(4000) // Default 30 seconds
 
 // สถานะการเชื่อมต่อ
 const isOnline = ref(navigator.onLine)
