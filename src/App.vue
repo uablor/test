@@ -28,39 +28,46 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number): numb
 }
 
 // ฟังก์ชันตรวจสอบตำแหน่งและคำนวณระยะห่าง
-const checkLocation = () => {
+const checkLocation = async () => {
   if (!navigator.geolocation) {
     console.error("Geolocation not supported")
     return
   }
 
-  navigator.geolocation.getCurrentPosition((position) => {
-    latitude.value = position.coords.latitude
-    longitude.value = position.coords.longitude
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      latitude.value = position.coords.latitude
+      longitude.value = position.coords.longitude
 
-    // คำนวณระยะห่างจากพิกัดของบริษัท
-    const distanceInKm = haversine(
-      companyLatitude,
-      companyLongitude,
-      latitude.value,
-      longitude.value
-    )
+      const distanceInKm = await haversine(
+        companyLatitude,
+        companyLongitude,
+        latitude.value,
+        longitude.value
+      )
 
-    // แปลงระยะห่างจากกิโลเมตรเป็นเมตร
-    distanceFromCompany.value = distanceInKm * 1000 // ระยะห่างเป็นเมตร
+      distanceFromCompany.value = distanceInKm * 1000
 
-    // เช็กระยะห่าง (เช่น ภายในรัศมี 30 เมตร)
-    if (distanceInKm <= 0.03) { // 30 เมตร (0.03 กิโลเมตร)
-      isInsideCompany.value = true
-      clockOutTime.value = null // หากอยู่ในบริษัทให้รีเซ็ตเวลาออกงาน
-    } else {
-      isInsideCompany.value = false
-      // บันทึกเวลาออกงานเมื่อออกจากบริษัทถ้าไม่ได้ทำงานนอกสถานที่
-      if (!isWorkingOffsite.value && !clockOutTime.value) {
-        clockOutTime.value = new Date().toLocaleString() // เวลาปัจจุบันในรูปแบบที่อ่านได้
+      if (distanceInKm <= 0.03) {
+        isInsideCompany.value = true
+        clockOutTime.value = null
+      } else {
+        isInsideCompany.value = false
+        if (!isWorkingOffsite.value && !clockOutTime.value) {
+          clockOutTime.value = new Date().toLocaleString()
+        }
       }
+    },
+    (error) => {
+      console.error("Error getting location:", error)
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,        // 10 วินาที
+      maximumAge: 0          // ไม่ใช้ข้อมูลเก่า
     }
-  })
+  )
+
 }
 
 // ฟังก์ชันตรวจสอบตำแหน่งเป็นระยะ
@@ -80,6 +87,7 @@ onBeforeUnmount(() => {
 // const toggleOffsiteStatus = () => {
 //   isWorkingOffsite.value = !isWorkingOffsite.value
 // }
+
 </script>
 
 <template>
@@ -103,21 +111,13 @@ onBeforeUnmount(() => {
       </label>
     </div>
 
-    <a
-      class="text-blue-600 underline"
-      :href="`https://www.google.com/maps?q=${companyLatitude},${companyLongitude}`"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <a class="text-blue-600 underline" :href="`https://www.google.com/maps?q=${companyLatitude},${companyLongitude}`"
+      target="_blank" rel="noopener noreferrer">
       🔗 ดูตำแหน่งบริษัทบน Google Maps
     </a>
 
-    <a
-      class="text-blue-600 underline"
-      :href="`https://www.google.com/maps?q=${latitude},${longitude}`"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <a class="text-blue-600 underline" :href="`https://www.google.com/maps?q=${latitude},${longitude}`" target="_blank"
+      rel="noopener noreferrer">
       🔗 ดูตำแหน่งของคุณบน Google Maps
     </a>
   </div>
