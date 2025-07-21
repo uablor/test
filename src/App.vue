@@ -77,9 +77,9 @@ onBeforeUnmount(() => {
 })
 
 // ฟังก์ชันที่ใช้สำหรับการเลือกสถานะงานนอกสถานที่
-const toggleOffsiteStatus = () => {
-  isWorkingOffsite.value = !isWorkingOffsite.value
-}
+// const toggleOffsiteStatus = () => {
+//   isWorkingOffsite.value = !isWorkingOffsite.value
+// }
 </script>
 
 <template>
