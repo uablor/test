@@ -75,7 +75,7 @@ let locationInterval: ReturnType<typeof setInterval>
 
 onMounted(() => {
   // เริ่มการตรวจสอบตำแหน่งทุกๆ 30 วินาที
-  locationInterval = setInterval(checkLocation, 30000) // ทุกๆ 30 วินาที
+  locationInterval = setInterval(checkLocation, 5000) // ทุกๆ 30 วินาที
 })
 
 onBeforeUnmount(() => {
