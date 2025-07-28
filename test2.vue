@@ -33,9 +33,9 @@ const locationHistory = ref<Array<{
 
 // Computed properties
 const statusText = computed(() => {
-  if (isWorkingOffsite.value) return '📅 ເຮັດວຽກນອກສະຸຖານທີ່'
-  if (isInsideCompany.value) return '✅ ຢຸ່ໃນຄິນີກ'
-  return '❌ ຢຸ່ນອກຄິນີກ ບໍ່ສາມາເຂົ້າງານໄດ້'
+  if (isWorkingOffsite.value) return '📅 ทำงานนอกสถานที่'
+  if (isInsideCompany.value) return '✅ อยู่ในบริษัท'
+  return '❌ อยู่นอกบริษัท'
 })
 
 const batteryOptimizedInterval = computed(() => {
@@ -75,7 +75,7 @@ const requestNotificationPermission = async () => {
 // ฟังก์ชันตรวจสอบตำแหน่งและคำนวณระยะห่าง
 const checkLocation = async () => {
   if (!trackingEnabled.value || !navigator.geolocation) {
-    locationError.value = "ບໍ່ສາມາດຕິດຕາມຕຳແໜ່ງໄດ້"
+    locationError.value = "การติดตามตำแหน่งไม่สามารถใช้งานได้"
     return
   }
 
@@ -118,7 +118,7 @@ const checkLocation = async () => {
           
           // แจ้งเตือนเมื่อเข้าบริษัท
           if (!wasInsideCompany) {
-            showNotification('ເຂົ້າຄິນີກແລ້ວ', `ທ່ານຢູ່ຫ່າງຈາກຄິນີກ ${Math.round(distance)} ແມັດ`)
+            showNotification('เข้าบริษัทแล้ว', `คุณอยู่ห่างจากบริษัท ${Math.round(distance)} เมตร`)
           }
         } else {
           isInsideCompany.value = false
@@ -126,24 +126,24 @@ const checkLocation = async () => {
           // บันทึกเวลาออกงานเฉพาะเมื่อไม่ได้ทำงานนอกสถานที่
           if (!isWorkingOffsite.value && !clockOutTime.value) {
             clockOutTime.value = new Date().toLocaleString('th-TH')
-            showNotification('ອອກຈາກຄິນີກແລ້ວ', `ທ່ານຢູ່ຫ່າງຈາກຄິນີກ ${Math.round(distance)} ແມັດ`)
+            showNotification('ออกจากบริษัทแล้ว', `คุณอยู่ห่างจากบริษัท ${Math.round(distance)} เมตร`)
           }
         }
 
         resolve()
       },
       (error) => {
-        let errorMessage = "ບໍ່ສາມາດດຶງຂໍ້ມູນຕຳແໜ່ງໄດ້"
+        let errorMessage = "ไม่สามารถดึงข้อมูลตำแหน่งได้"
         
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMessage = "ບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ເຂົ້າສູນຕຳແໜ່ງ"
+            errorMessage = "ไม่ได้รับอนุญาตให้เข้าถึงตำแหน่ง"
             break
           case error.POSITION_UNAVAILABLE:
-            errorMessage = "ບໍ່ສາມາດດຶງຕຳແໜ່ງໄດ້"
+            errorMessage = "ไม่สามารถหาตำแหน่งได้"
             break
           case error.TIMEOUT:
-            errorMessage = "ເວລາລົງໃນການດຶງຕຳແໜ່ງ"
+            errorMessage = "หมดเวลาในการหาตำแหน่ง"
             break
         }
         
@@ -247,147 +247,167 @@ const exportLocationData = () => {
   URL.revokeObjectURL(url)
 }
 </script>
+
 <template>
-  <div class="max-w-3xl mx-auto p-6 space-y-6 font-sans">
+  <div class="max-w-2xl mx-auto p-4 space-y-4">
     <!-- Header Controls -->
-    <div class="flex flex-wrap gap-3 justify-center md:justify-start">
-      <button
-        @click="checkLocation"
+    <div class="flex flex-wrap gap-2 mb-4">
+      <button 
+        @click="checkLocation" 
         :disabled="!trackingEnabled"
-        class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-5 py-2.5 rounded-lg shadow transition duration-200"
+        class="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded transition-colors"
       >
-        📍 ກວດສອບຕຳແໜ່ງໃນຄິນີກ
+        📍 เช็กตำแหน่งในบริษัท
       </button>
-
-      <button
+      
+      <button 
         @click="toggleTracking"
-        :class="trackingEnabled ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
-        class="text-white px-5 py-2.5 rounded-lg shadow transition duration-200"
+        :class="trackingEnabled ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'"
+        class="text-white px-4 py-2 rounded transition-colors"
       >
-        {{ trackingEnabled ? '⏸️ ຢຸດການຕິດຕາມ' : '▶️ ເລີ່ມຕິດຕາມ' }}
+        {{ trackingEnabled ? '⏸️ หยุดติดตาม' : '▶️ เริ่มติดตาม' }}
       </button>
-
-      <button
+      
+      <button 
         @click="exportLocationData"
-        class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-lg shadow transition duration-200"
+        class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded transition-colors"
       >
-        💾 ສົ່ງອອກຂໍ້ມູນ
+        💾 ส่งออกข้อมูล
       </button>
     </div>
 
     <!-- Status Cards -->
-    <div class="grid md:grid-cols-2 gap-6">
+    <div class="grid md:grid-cols-2 gap-4">
       <!-- Current Status -->
-      <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-md">
-        <h3 class="font-bold mb-3 text-gray-800">📊 ສະຖານະປັດຈຸບັນ</h3>
-        <p class="text-lg font-semibold" :class="{
+      <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+        <h3 class="font-semibold mb-2">📊 สถานะปัจจุบัน</h3>
+        <p class="text-lg font-medium" :class="{
           'text-green-600': isInsideCompany,
-          'text-yellow-600': isWorkingOffsite,
+          'text-orange-600': isWorkingOffsite,
           'text-red-600': !isInsideCompany && !isWorkingOffsite
         }">
           {{ statusText }}
         </p>
-        <div v-if="lastCheckTime" class="text-sm text-gray-500 mt-2">
-          ອັບເດດຫຼ້າສຸດ: {{ lastCheckTime.toLocaleString('lo-LA') }}
+        
+        <div v-if="lastCheckTime" class="text-sm text-gray-500 mt-1">
+          อัพเดทล่าสุด: {{ lastCheckTime.toLocaleString('th-TH') }}
         </div>
-        <div v-if="!isOnline" class="text-red-500 text-sm mt-2">
-          ⚠️ ບໍ່ມີການເຊື່ອມຕໍ່ອິນເຕີເນັດ
+        
+        <div v-if="!isOnline" class="text-red-500 text-sm mt-1">
+          ⚠️ ไม่มีการเชื่อมต่ออินเทอร์เน็ต
         </div>
       </div>
 
       <!-- Location Info -->
-      <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-md">
-        <h3 class="font-bold mb-3 text-gray-800">📍 ຂໍ້ມູນຕຳແໜ່ງ</h3>
-        <div v-if="latitude && longitude" class="space-y-2 text-sm text-gray-700">
-          <p>🌍 ພິກັດ: {{ latitude.toFixed(6) }}, {{ longitude.toFixed(6) }}</p>
+      <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+        <h3 class="font-semibold mb-2">📍 ข้อมูลตำแหน่ง</h3>
+        <div v-if="latitude && longitude" class="space-y-1 text-sm">
+          <p>🌍 พิกัด: {{ latitude.toFixed(6) }}, {{ longitude.toFixed(6) }}</p>
           <p v-if="distanceFromCompany">
-            🔍 ລະຍະທາງ: {{ Math.round(distanceFromCompany) }} ແມັດ
+            🔍 ระยะห่าง: {{ Math.round(distanceFromCompany) }} เมตร
           </p>
           <p v-if="locationAccuracy">
-            🎯 ຄວາມແມ່ນຍຳ: ±{{ Math.round(locationAccuracy) }} ແມັດ
+            🎯 ความแม่นยำ: ±{{ Math.round(locationAccuracy) }} เมตร
           </p>
         </div>
-        <p v-if="locationError" class="text-red-500 text-sm mt-2">
+        
+        <p v-if="locationError" class="text-red-500 text-sm">
           ❌ {{ locationError }}
         </p>
       </div>
     </div>
 
-    <!-- Work Settings -->
-    <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-md">
-      <h3 class="font-bold text-gray-800 mb-4">⚙️ ການຕັ້ງຄ່າການເຮັດວຽກ</h3>
-
-      <div class="space-y-4">
-        <label class="flex items-center space-x-2 text-sm text-gray-700">
-          <input type="checkbox" v-model="isWorkingOffsite" class="w-4 h-4 text-blue-500 rounded" />
-          <span>📅 ກຳລັງເຮັດວຽກນອກສະຖານທີ່</span>
+    <!-- Work Status Controls -->
+    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+      <h3 class="font-semibold mb-3">⚙️ การตั้งค่า</h3>
+      
+      <div class="space-y-3">
+        <label class="flex items-center space-x-2 cursor-pointer">
+          <input 
+            type="checkbox" 
+            v-model="isWorkingOffsite"
+            class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          />
+          <span>📅 กำลังทำงานนอกสถานที่</span>
         </label>
 
-        <div class="flex items-center space-x-3 text-sm">
-          <label class="font-medium text-gray-700">⏱️ ຄວາມຖີ່ການກວດສອບ:</label>
-          <select v-model="checkInterval" class="border border-gray-300 rounded px-3 py-1">
-            <option :value="1000">1 ວິນາທີ</option>
-            <option :value="30000">30 ວິນາທີ</option>
-            <option :value="60000">1 ນາທີ</option>
-            <option :value="300000">5 ນາທີ</option>
+        <div class="flex items-center space-x-4">
+          <label class="text-sm font-medium">⏱️ ความถี่ในการตรวจสอบ:</label>
+          <select 
+            v-model="checkInterval" 
+            class="border border-gray-300 rounded px-2 py-1 text-sm"
+          >
+            <option :value="1000">1 วินาที</option>
+            <option :value="30000">30 วินาที</option>
+            <option :value="60000">1 นาที</option>
+            <option :value="300000">5 นาที</option>
           </select>
         </div>
       </div>
     </div>
 
-    <!-- Clock Out -->
-    <div v-if="clockOutTime && !isWorkingOffsite" class="bg-orange-100 border border-orange-300 rounded-xl p-5">
+    <!-- Clock Out Time -->
+    <div v-if="clockOutTime && !isWorkingOffsite" 
+         class="bg-orange-50 border border-orange-200 rounded-lg p-4">
       <p class="text-orange-800">
-        ⏰ <strong>ເວລາອອກວຽກ:</strong> {{ clockOutTime }}
+        ⏰ <strong>เวลาออกงาน:</strong> {{ clockOutTime }}
       </p>
     </div>
 
     <!-- Location History -->
-    <div v-if="locationHistory.length > 0" class="bg-white border border-gray-200 rounded-xl p-5 shadow-md">
+    <div v-if="locationHistory.length > 0" class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
       <div class="flex justify-between items-center mb-3">
-        <h3 class="font-bold text-gray-800">📋 ປະຫວັດຕຳແໜ່ງ</h3>
-        <button @click="clearHistory" class="text-red-600 hover:underline text-sm">
-          🗑️ ລ້າງປະຫວັດ
+        <h3 class="font-semibold">📋 ประวัติตำแหน่งล่าสุด</h3>
+        <button 
+          @click="clearHistory"
+          class="text-red-600 hover:text-red-800 text-sm"
+        >
+          🗑️ ล้าง
         </button>
       </div>
-      <div class="max-h-52 overflow-y-auto space-y-2">
-        <div
-          v-for="(record, index) in locationHistory.slice(0, 5)"
+      
+      <div class="max-h-48 overflow-y-auto space-y-2">
+        <div 
+          v-for="(record, index) in locationHistory.slice(0, 5)" 
           :key="index"
-          class="bg-gray-50 p-3 rounded border text-xs flex justify-between"
+          class="text-xs bg-gray-50 p-2 rounded border"
         >
-          <span>{{ record.timestamp.toLocaleString('lo-LA') }}</span>
-          <span :class="record.distance <= companyRadius ? 'text-green-600' : 'text-red-600'">
-            {{ Math.round(record.distance) }}m
-          </span>
+          <div class="flex justify-between">
+            <span>{{ record.timestamp.toLocaleString('th-TH') }}</span>
+            <span :class="{
+              'text-green-600': record.distance <= companyRadius,
+              'text-red-600': record.distance > companyRadius
+            }">
+              {{ Math.round(record.distance) }}m
+            </span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Map Links -->
-    <div class="grid md:grid-cols-2 gap-3">
-      <a
+    <div class="grid md:grid-cols-2 gap-2">
+      <a 
         :href="`https://www.google.com/maps?q=${companyLatitude},${companyLongitude}`"
-        target="_blank"
+        target="_blank" 
         rel="noopener noreferrer"
-        class="block text-blue-600 hover:underline hover:text-blue-800 text-sm border p-3 rounded transition"
+        class="block text-blue-600 hover:text-blue-800 underline text-sm p-2 border rounded hover:bg-blue-50 transition-colors"
       >
-        🏢 ເບິ່ງສະຖານທີ່ຄິນີກໃນ Google Maps
+        🏢 ดูตำแหน่งบริษัทบน Google Maps
       </a>
-
-      <a
+      
+      <a 
         v-if="latitude && longitude"
-        :href="`https://www.google.com/maps?q=${latitude},${longitude}`"
+        :href="`https://www.google.com/maps?q=${latitude},${longitude}`" 
         target="_blank"
         rel="noopener noreferrer"
-        class="block text-blue-600 hover:underline hover:text-blue-800 text-sm border p-3 rounded transition"
+        class="block text-blue-600 hover:text-blue-800 underline text-sm p-2 border rounded hover:bg-blue-50 transition-colors"
       >
-        📍 ເບິ່ງຕຳແໜ່ງຂອງເຈົ້າໃນ Google Maps
+        📍 ดูตำแหน่งของคุณบน Google Maps
       </a>
     </div>
   </div>
 </template>
-
 
 <style scoped>
 </style>

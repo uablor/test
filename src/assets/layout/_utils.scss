@@ -1,0 +1,42 @@
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--card-shadow);
+  border-radius: 12px;
+}
+
+.p-toast .p-toast-message .p-toast-message-content .p-toast-message-icon.p-icon {
+  width: 2.25rem !important;
+}
+
+.p-dropdown-panel .p-dropdown-header .p-dropdown-filter-icon {
+  margin-top: -5px !important;
+}
+
+.p-input-icon-right > .p-inputtext {
+  width: 100% !important;
+}
+
+.p-input-icon-right .p-icon {
+  margin-top: -6px !important;
+}
+
+.p-toast {
+  width: 18rem;
+}
+
+.p-editor-container .p-editor-content .ql-editor {
+  font-size: 16px !important;
+}
+.p-datatable {
+  font-size: 100% !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  font-size: 17px !important;
+}
+.p-component-overlay {
+  background: none !important;
+}
