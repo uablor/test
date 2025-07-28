@@ -2,8 +2,8 @@
 import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 
 // พิกัดของบริษัท
-const companyLatitude = 18.01000862090247
-const companyLongitude = 102.63258630394976
+const companyLatitude = 18.032616885792567
+const companyLongitude = 102.64114300398856
 const companyRadius = 30 // เมตร - ปรับได้
 
 // พิกัดที่ดึงจาก Geolocation API

@@ -90,7 +90,7 @@
 
  
             <template #title>
-              <CheckOutIn />
+              <!-- <CheckOutIn /> -->
             </template>
 
             <div class="content-body">
@@ -149,7 +149,7 @@ import {
   HomeOutlined,
 } from '@ant-design/icons-vue'
 import { ref, onMounted, onUnmounted } from 'vue'
-import CheckOutIn from './CheckOut-In.vue'
+// import CheckOutIn from './CheckOut-In.vue'
 const collapsed = ref<boolean>(false)
 const selectedKeys = ref<string[]>(['1'])
 const isMobile = ref<boolean>(false)
